@@ -145,6 +145,9 @@ typedef struct {
 void json_object_seed(size_t seed);
 size_t json_object_size(const json_t *object);
 json_t *json_object_get(const json_t *object, const char *key);
+json_t *json_object_getn(const json_t *object, const char *key, size_t size);
+json_t *json_object_steal(const json_t *object, const char *key);
+json_t *json_object_stealn(const json_t *object, const char *key, size_t size);
 int json_object_set_new(json_t *object, const char *key, json_t *value);
 int json_object_set_new_nocheck(json_t *object, const char *key, json_t *value);
 int json_object_del(json_t *object, const char *key);
@@ -197,6 +200,7 @@ int json_object_iter_set(json_t *object, void *iter, json_t *value)
 
 size_t json_array_size(const json_t *array);
 json_t *json_array_get(const json_t *array, size_t index);
+json_t *json_array_steal(const json_t *array, size_t index);
 int json_array_set_new(json_t *array, size_t index, json_t *value);
 int json_array_append_new(json_t *array, json_t *value);
 int json_array_insert_new(json_t *array, size_t index, json_t *value);

@@ -88,20 +88,33 @@ int hashtable_set(hashtable_t *hashtable, const char *key, json_t *value);
  *
  * @hashtable: The hashtable object
  * @key: The key
+ * @size: Size of the key in bytes
  *
  * Returns value if it is found, or NULL otherwise.
  */
-void *hashtable_get(hashtable_t *hashtable, const char *key);
+void *hashtable_get(hashtable_t *hashtable, const char *key, size_t size);
+
+/**
+* hashtable_steal - Steal a value from the hashtable
+*
+* @hashtable: The hashtable object
+* @key: The key
+* @size: Size of the key in bytes
+*
+* Returns value if it is found, or NULL otherwise.
+*/
+void *hashtable_steal(hashtable_t *hashtable, const char *key, size_t size);
 
 /**
  * hashtable_del - Remove a value from the hashtable
  *
  * @hashtable: The hashtable object
  * @key: The key
+ * @size: Size of the key in bytes
  *
  * Returns 0 on success, or -1 if the key was not found.
  */
-int hashtable_del(hashtable_t *hashtable, const char *key);
+int hashtable_del(hashtable_t *hashtable, const char *key, size_t size);
 
 /**
  * hashtable_clear - Clear hashtable

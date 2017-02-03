@@ -91,13 +91,41 @@ size_t json_object_size(const json_t *json)
 
 json_t *json_object_get(const json_t *json, const char *key)
 {
+    if(!key || !json_is_object(json))
+        return NULL;
+
+    return json_object_getn(json, key, strlen(key));
+}
+
+json_t *json_object_getn(const json_t *json, const char *key, size_t size)
+{
     json_object_t *object;
 
     if(!key || !json_is_object(json))
         return NULL;
 
     object = json_to_object(json);
-    return hashtable_get(&object->hashtable, key);
+    return hashtable_get(&object->hashtable, key, size);
+}
+
+json_t *json_object_steal(const json_t *json, const char *key)
+{
+    if(!key || !json_is_object(json))
+        return NULL;
+
+    return json_object_stealn(json, key, strlen(key));
+}
+
+json_t *json_object_stealn(const json_t *json, const char *key, size_t size)
+{
+    json_object_t *object;
+
+    if(!key || !json_is_object(json))
+        return NULL;
+
+    object = json_to_object(json);
+
+    return hashtable_steal(&object->hashtable, key, size);
 }
 
 int json_object_set_new_nocheck(json_t *json, const char *key, json_t *value)
@@ -142,7 +170,7 @@ int json_object_del(json_t *json, const char *key)
         return -1;
 
     object = json_to_object(json);
-    return hashtable_del(&object->hashtable, key);
+    return hashtable_del(&object->hashtable, key, strlen(key));
 }
 
 int json_object_clear(json_t *json)
@@ -519,6 +547,29 @@ int json_array_insert_new(json_t *json, size_t index, json_t *value)
     array->entries++;
 
     return 0;
+}
+
+json_t *json_array_steal(const json_t *json, size_t index)
+{
+    json_array_t *array;
+    json_t *element;
+
+    if(!json_is_array(json))
+        return NULL;
+    array = json_to_array(json);
+
+    if(index >= array->entries)
+        return NULL;
+
+    element = array->table[index];
+
+    /* If we're removing the last element, nothing has to be moved */
+    if(index < array->entries - 1)
+        array_move(array, index, index + 1, array->entries - index - 1);
+
+    array->entries--;
+
+    return element;
 }
 
 int json_array_remove(json_t *json, size_t index)
